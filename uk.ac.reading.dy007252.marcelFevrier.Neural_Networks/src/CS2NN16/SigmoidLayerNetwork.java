@@ -29,7 +29,10 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
-		
+		super.calcOutputs(nInputs);
+		for (int neuron = 0; neuron < numNeurons; neuron++){
+			outputs.set(neuron, (1.0/(1.0 + Math.exp(-(outputs.get(neuron))))));
+		}
 	}
 	/**
 	 * find deltas
@@ -37,6 +40,9 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 			// write code to set delta as error * deriv activation
+		for (int neuron = 0; neuron < numNeurons; neuron++){
+			deltas.set(neuron, errors.get(neuron) * outputs.get(neuron) * (1.0 - outputs.get(neuron))); // delta = error * output * (1.0 - output);
+		}
 	}
 	/**
 	 * @param args
