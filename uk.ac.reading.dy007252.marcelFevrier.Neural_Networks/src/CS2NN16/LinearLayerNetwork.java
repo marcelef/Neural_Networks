@@ -93,8 +93,8 @@ public class LinearLayerNetwork {
 	 *	@param errors	
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
-		for (int cnt = 0; cnt < errors.size();cnt++){
-			deltas.set(cnt, errors.get(cnt));
+		for (int cnt = 0; cnt < errors.size();cnt++){ // for each error in errors
+			deltas.set(cnt, errors.get(cnt)); // set the delta (of the same index as the error's index) as the error
 		}
 	}	
 	
@@ -105,8 +105,14 @@ public class LinearLayerNetwork {
 	 * @return			 
 	 */
 	private int weightIndex (int wNeuron, int wWeight) {
+		/*
+		 * the index of a weight for a particular neuron is that neuron's index 
+		 * multiplied by the number of weights per neuron 
+		 * plus the weight itself 
+		 * plus 1 for the bias weight
+		 */
 		
-		return wNeuron * (numWeights / numNeurons) + wWeight + 1;			// change this
+		return wNeuron * (numWeights / numNeurons) + wWeight + 1; 
 	}
 	
 	/**
@@ -118,12 +124,24 @@ public class LinearLayerNetwork {
 	 * @param momentum		
 	 */
 	private void changeOneWeight(int wNeuron, int wWeight, double theIn, double learnRate, double momentum) {
-		// first calculate index of weight, then the change in weight, then change the weight
-		
+
+		/*
+		 * the new wWeight is the index of that particular weight for its respective neuron
+		 */
 		wWeight = weightIndex(wNeuron, wWeight);
 		
+		/*
+		 * the change in weight (wWeight) is the learning rate 
+		 * multiplied by the delta of that particular neuron 
+		 * multiplied by the input of that particular neuron
+		 * plus the momentum multiplied by the previous change in weight
+		 */		
 		changeInWeights.set(wWeight, (learnRate * deltas.get(wNeuron) * theIn + momentum*changeInWeights.get(wWeight)));
 		
+		/*
+		 * After calculating the new change in weight the current weight 
+		 * is equal to itself plus the new change in weight
+		 */	
 		weights.set(wWeight, weights.get(wWeight) + changeInWeights.get(wWeight));
 		
 	}
@@ -135,10 +153,10 @@ public class LinearLayerNetwork {
 	 * @param momentum	
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
-		for(int neuron = 0; neuron < numNeurons; neuron++){
-			changeOneWeight(neuron, -1, 1, learnRate, momentum);
-			for (int weight = 0; weight < ins.size(); weight++){
-				changeOneWeight(neuron, weight, ins.get(weight), learnRate, momentum);
+		for(int neuron = 0; neuron < numNeurons; neuron++){ // for every neuron
+			changeOneWeight(neuron, -1, 1, learnRate, momentum); // calculate the change in weight for the bias weight of each neuron
+			for (int weight = 0; weight < ins.size(); weight++){ // for each weight between each input and the neuron (excluding the bias weight because that has already been accounted for)
+				changeOneWeight(neuron, weight, ins.get(weight), learnRate, momentum); // change a particular weight of the neuron using the input that the weight is connected to
 			}
 		}
 	}
@@ -214,8 +232,8 @@ public class LinearLayerNetwork {
 	 */
 	public String getWeights() {
 		String s = "";
-		for (Double w:weights){
-			s += String.format("%.5f", w) + " "; // Append to s the weight w which is formatted to 5 decimal points
+		for (Double w:weights){ // for each weight in weights
+			s += String.format("%.5f", w) + " "; // Append to s the value of weight w which is formatted to 5 decimal points
 		}
 		return s;										// return the result
 	}
