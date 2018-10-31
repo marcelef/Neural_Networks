@@ -1,4 +1,7 @@
-package uk.ac.reading.dy007252.marcelFevrier.Neural_Networks;
+/**
+ * 
+ */
+package CS2NN16;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -43,8 +46,9 @@ public class SigmoidNeuron extends LinearNeuron {
 		SigmoidNeuron SN = new SigmoidNeuron(2, AndData);
 		Random rgen = new Random();
 		SN.setWeights(rgen);
+		SN.doInitialise();
 		System.out.print(SN.doPresent());
-		System.out.print(SN.doLearn(1000, 0.2, 0.1));
+		System.out.print(SN.doLearn(2000, 0.2, 0.1));
 		System.out.print(SN.doPresent());
 
 	}

@@ -1,8 +1,7 @@
-package uk.ac.reading.dy007252.marcelFevrier.Neural_Networks;
+package CS2NN16;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 
 /**
  * Class for a neuron with linear activation
@@ -45,11 +44,11 @@ public class LinearNeuron {
 	}
 	
 	/**
-	 * depositOutput to the data set
+	 * outputToDataSet to the data set
 	 * @param ct	which item in the data set
 	 * @param d		the data set
 	 */
-	private void depositOutput (int ct, DataSet d) {
+	private void outputToDataSet (int ct, DataSet d) {
 		d.storeOutput(ct, 0, output);			// just store output there
 	}
 	
@@ -57,10 +56,10 @@ public class LinearNeuron {
 	 * compute output of network passing it each item in data set in turn
 	 * @param d
 	 */
-	private void computeNetwork(DataSet d) {
+	private void presentDataSet(DataSet d) {
 		for (int ct=0; ct < d.numInSet(); ct++) {	// for each item in data set
 			calcOutput(d.getIns(ct));				// calculate output
-			depositOutput(ct, d);					// and put in data set
+			outputToDataSet(ct, d);					// and put in data set
 		}
 	}
 	
@@ -71,22 +70,33 @@ public class LinearNeuron {
 	protected void findDelta(double error) {
 		delta = error;
 	}
-	
+
+	/**
+	 * Change one weight
+	 * @param wWeight		the number of the weight to change (0 for bias)
+	 * @param theIn			the value of the input 
+	 * @param learnRate		learning rate
+	 * @param momentum		momentum
+	 */
+	private void changeOneWeight (int wWeight, double theIn, double learnRate, double momentum) {
+		changeInWeights.set(wWeight, theIn * delta * learnRate + changeInWeights.get(wWeight) * momentum);
+		// compute change in this weight
+		weights.set(wWeight, weights.get(wWeight )+ changeInWeights.get(wWeight));
+		// change the weight by that amount
+		
+	}
 	/**
 	 * change all the weights in the neuron
 	 * @param ins		array list of the inputs to the neuron
 	 * @param learnRate	learning rate: change is learning rate * input * delta
-	 * @param momentum	momentum constant : change is also momentun * change in weight last time
+	 * @param momentum	momentum constant : change is also momentum * change in weight last time
 	 */
-	private void changeTheWeights(ArrayList<Double> ins, double learnRate, double momentum) {
+	private void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
 		double theIn;
 		for (int wct = 0; wct < weights.size(); wct++) {			// for each weight
 			if (wct == 0) theIn = 1.0; else theIn = ins.get(wct-1);	
 					// input is 1 for bias weight, else it is wct'th-1 from ins 
-			changeInWeights.set(wct, theIn * delta * learnRate + changeInWeights.get(wct) * momentum);
-					// compute change in this weight
-			weights.set(wct, weights.get(wct )+ changeInWeights.get(wct));
-					// change the weight by that amount
+			changeOneWeight(wct, theIn, learnRate, momentum);		// change the wct's weight
 		}
 	}
 	
@@ -97,12 +107,12 @@ public class LinearNeuron {
 	 * @param learnRate	learning rate constant
 	 * @param momentum	momentum constant
 	 */
-	private void adaptNetwork(DataSet d, double learnRate, double momentum) {
+	private void learnDataSet(DataSet d, double learnRate, double momentum) {
 		for (int ct=0; ct < d.numInSet(); ct++) {				// for each item in set
 			calcOutput(d.getIns(ct));							// calc output
-			depositOutput(ct, d);								// put in data set
+			outputToDataSet(ct, d);								// put in data set
 			findDelta(d.getErrors(ct).get(0));					// calc delta, from the error
-			changeTheWeights(d.getIns(ct), learnRate, momentum);// change the weights
+			changeAllWeights(d.getIns(ct), learnRate, momentum);// change the weights
 		}
 	}
 	/**
@@ -158,7 +168,7 @@ public class LinearNeuron {
 	 * @return
 	 */
 	public String doPresent() {
-		computeNetwork(trainData);
+		presentDataSet(trainData);
 		return trainData.toString(true, true) + "\nOver Set : " + trainData.dataAnalysis()+"\n";
 	}
 	/**
@@ -172,7 +182,7 @@ public class LinearNeuron {
 	public String doLearn (int numEpochs, double lRate, double momentum) {
 		String s = "";
 		for (int ct=1; ct<=numEpochs; ct++) {
-			adaptNetwork(trainData, lRate, momentum);
+			learnDataSet(trainData, lRate, momentum);
 			if (numEpochs<20 || ct % (numEpochs/10) == 0)
 				s = s + "Epoch " + Integer.toString(ct) + " : " + trainData.dataAnalysis()+"\n";
 		}
@@ -184,6 +194,7 @@ public class LinearNeuron {
 		DataSet AndData = new DataSet("2 1 %.0f %.0f %.2f;x1 x2 AND;0 0 0;0 1 0;1 0 0;1 1 1");
 		LinearNeuron LN = new LinearNeuron(2, AndData);
 		LN.setWeights("0.2 0.3 -0.1");
+		LN.doInitialise();
 		System.out.print(LN.doPresent());
 		System.out.print(LN.doLearn(10, 0.2, 0.1));
 		System.out.print(LN.doPresent());
