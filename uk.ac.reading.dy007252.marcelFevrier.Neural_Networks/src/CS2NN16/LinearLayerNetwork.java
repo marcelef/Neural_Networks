@@ -106,9 +106,7 @@ public class LinearLayerNetwork {
 	 */
 	private int weightIndex (int wNeuron, int wWeight) {
 		
-		int weightsPerNeuron = numWeights / numNeurons;
-		
-		return wNeuron * (numWeights / numNeurons) + wWeight;			// change this
+		return wNeuron * (numWeights / numNeurons) + wWeight + 1;			// change this
 	}
 	
 	/**
@@ -122,9 +120,11 @@ public class LinearLayerNetwork {
 	private void changeOneWeight(int wNeuron, int wWeight, double theIn, double learnRate, double momentum) {
 		// first calculate index of weight, then the change in weight, then change the weight
 		
-		changeInWeights.set(weightIndex(wNeuron, wWeight), (learnRate * deltas.get(wNeuron) * theIn + momentum*changeInWeights.get(wWeight)));
+		wWeight = weightIndex(wNeuron, wWeight);
 		
-;		weights.set(weightIndex(wNeuron, wWeight), changeInWeights.get(wWeight));
+		changeInWeights.set(wWeight, (learnRate * deltas.get(wNeuron) * theIn + momentum*changeInWeights.get(wWeight)));
+		
+		weights.set(wWeight, weights.get(wWeight) + changeInWeights.get(wWeight));
 		
 	}
 	
@@ -135,9 +135,10 @@ public class LinearLayerNetwork {
 	 * @param momentum	
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
-		for(int neuron = 0; neuron < numNeurons - 1; neuron++){
-			for (int weight = 0; weight < numWeights / numNeurons; weight++){
-				changeOneWeight(neuron, weight, ins.get(neuron), learnRate, momentum);
+		for(int neuron = 0; neuron < numNeurons; neuron++){
+			changeOneWeight(neuron, -1, 1, learnRate, momentum);
+			for (int weight = 0; weight < ins.size(); weight++){
+				changeOneWeight(neuron, weight, ins.get(weight), learnRate, momentum);
 			}
 		}
 	}

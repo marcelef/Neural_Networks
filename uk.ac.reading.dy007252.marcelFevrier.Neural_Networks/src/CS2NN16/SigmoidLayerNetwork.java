@@ -29,7 +29,7 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
-		// you write this
+		
 	}
 	/**
 	 * find deltas
