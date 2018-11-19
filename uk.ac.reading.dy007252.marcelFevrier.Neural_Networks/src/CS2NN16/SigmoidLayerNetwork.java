@@ -25,7 +25,7 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 	
 	/**
 	 * calcOutputs of neuron
-	 * @param nInputs	
+	 * @param nInputs used to calculate the outputs
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
@@ -35,8 +35,8 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 		}
 	}
 	/**
-	 * find deltas
-	 *	@param errors	
+	 * find deltas using a list of errors
+	 *	@param errors the list of errors which are used to calculate each delta
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 			// write code to set delta as error * deriv activation
@@ -55,7 +55,7 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 		SN.doInitialise();
 		System.out.println(SN.doPresent());
 		System.out.println("Weights " + SN.getWeights());
-		System.out.println(SN.doLearn(1000,  0.2,  0.1));
+		System.out.println(SN.doLearn(1000,  0.15,  0.4));
 		System.out.println(SN.doPresent());
 		System.out.println("Weights " + SN.getWeights());
 
