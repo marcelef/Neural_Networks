@@ -33,16 +33,22 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
-		// you write code here
+		super.calcOutputs(nInputs); // first calculate the outputs of this layer
+		nextLayer.calcOutputs(this.outputs); // then calculate the outputs of the next layer using the outputs of this layer
 	}
 	
 	/**
 	 * outputsToDataSet of the network to the data set
-	 * @param ct	
-	 * @param d		
+	 * @param ct	the index of the item in the DataSet that is being refered to
+	 * @param d		the DataSet which the outputs will be written to
 	 */
 	protected void outputsToDataSet (int ct, DataSet d) {
-		// you write code here ... note DataSet wants output(s) of final layer only
+		// call the next layer's outputsToDataSet method
+		// the last layer will be the only non-multiLayerNetwork object in the network
+		// each hidden layer simply passes on to the next layer
+		// until it reaches the last layer whose outputs are the final outputs of the whole network
+		// and whose outputsToDataSet method writes the outputs to the DataSet
+		this.nextLayer.outputsToDataSet(ct, d);
 	}
 	
 	/**
@@ -50,7 +56,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 *	@param errors 	
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
-		// you write this
+		this.nextLayer.findDeltas(errors); // find the deltas in the next layer first using the given errors
+		super.findDeltas(this.nextLayer.weightedDeltas()); // using the weighted deltas in the next layer, calculate the deltas for this layer
 	}
 	
 	/**
@@ -60,7 +67,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 * @param momentum	momentum constant : change is also momentun * change in weight last time
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
-		// you write this
+		super.changeAllWeights(ins, learnRate, momentum); // change this layer's weights first
+		this.nextLayer.changeAllWeights(this.outputs, learnRate, momentum); // change the next layer's weights using this layer's outputs as the inputs to the next layer
 	}	
 	
 	/**
@@ -85,14 +93,27 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 * @return
 	 */
 	public int numWeights() {
-		return 0; 		// change this
+		
+		// total number of weights is this layer's numWeights 
+		//plus the number of weights in any subsequent layer(s)'s num of weights
+		
+		int totalWeights = super.numWeights() + this.nextLayer.numWeights(); 
+		
+		return totalWeights;
 	}
 	/**
 	 * return the weights in the whole network as a string
 	 * @return the string
 	 */
 	public String getWeights() {
-		return "";		// change this
+		String res = "";
+		
+		res += super.getWeights(); // get the string of weights for this layer
+		res += this.nextLayer.getWeights(); // add the string of weights for the next layer
+		// even if nextLayer is another MultiLayerNetwork this call will 
+		//return that layer's weights plus any next further layers
+		
+		return res;		// change this
 	}
 	/**
 	 * initialise network before running
@@ -112,7 +133,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		MLN.doInitialise();
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
-		System.out.println(MLN.doLearn(2000, 0.5,  0.8));
+		System.out.println(MLN.doLearn(2000, 0.4,  0.8));
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
 	}
@@ -126,7 +147,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 			MLN.doInitialise();
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
-			System.out.println(MLN.doLearn(2000,  0.5,  0.8));
+			System.out.println(MLN.doLearn(2000,  0.4,  0.7));
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
 		

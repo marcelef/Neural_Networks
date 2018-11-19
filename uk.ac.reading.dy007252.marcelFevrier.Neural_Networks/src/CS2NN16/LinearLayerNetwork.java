@@ -194,7 +194,9 @@ public class LinearLayerNetwork {
 	 */
 	public ArrayList<Double> weightedDeltas() {
 		ArrayList<Double> wtDeltas = new ArrayList<Double>();	// create array for answer
-			// now add suitable 'errors'
+		for (int ct = 0; ct < numInputs; ct++) { // for all neurons in previous layer (num of inputs in this layer)
+			wtDeltas.add(this.deltas.get(0) * this.weights.get(ct + 1)); // multiply delta with respective weight
+		}
 		return wtDeltas;
 	}
 	
