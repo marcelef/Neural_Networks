@@ -109,7 +109,6 @@ public class LinearLayerNetwork {
 		 * the index of a weight for a particular neuron is that neuron's index 
 		 * multiplied by the number of weights per neuron 
 		 * plus the weight itself 
-		 * plus 1 for the bias weight
 		 */
 		
 		return wNeuron * (numWeights / numNeurons) + wWeight; 
@@ -192,12 +191,35 @@ public class LinearLayerNetwork {
 	 * 
 	 * @return	arraylist of errors
 	 */
+	
+	/*
 	public ArrayList<Double> weightedDeltas() {
 		ArrayList<Double> wtDeltas = new ArrayList<Double>();	// create array for answer
 		for (int ct = 0; ct < numInputs; ct++) { // for all neurons in previous layer (num of inputs in this layer)
 			wtDeltas.add(this.deltas.get(0) * this.weights.get(ct + 1)); // multiply delta with respective weight
 		}
 		return wtDeltas;
+	}
+	*/
+	
+	/**
+	 * Calculate the errors in the previous layer, being the deltas in this layer * associated weights
+	 * this is used in the back propagation algorithm
+	 * @return errors the array of errors for the previous layer
+	 */
+	public ArrayList<Double> weightedDeltas(){
+		ArrayList<Double> errors = new ArrayList<Double>(); 				// the array for the previous neuron's errors
+		double error; 														// will store the error of each neuron
+		int index; 															// the index of the respective weight 
+		for (int prevNeuron = 0; prevNeuron < numInputs; prevNeuron++) { 	// for each neuron in the previous layer
+			error = 0; 														// initialise error to 0
+			for (int thisNeuron = 0; thisNeuron < this.numNeurons; thisNeuron++) { // for each neuron in this layer
+				index = this.weightIndex(thisNeuron, prevNeuron + 1); 		// the index of the weight from the previous layer to the neuron in this layer
+				error += this.deltas.get(thisNeuron) * this.weights.get(index); // calc and add this error to the total error for the previous neuron
+			}
+			errors.add(error); 												// add the error to the list of errors
+		}
+		return errors;
 	}
 	
 	/**

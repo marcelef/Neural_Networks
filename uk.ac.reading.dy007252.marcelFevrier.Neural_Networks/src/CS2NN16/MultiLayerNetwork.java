@@ -133,7 +133,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		MLN.doInitialise();
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
-		System.out.println(MLN.doLearn(2000, 0.4,  0.8));
+		System.out.println(MLN.doLearn(1000, 0.4,  0.7));
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
 	}
@@ -147,7 +147,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 			MLN.doInitialise();
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
-			System.out.println(MLN.doLearn(2000,  0.4,  0.7));
+			System.out.println(MLN.doLearn(1000,  0.3,  0.5));
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
 		
@@ -173,8 +173,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		TestXOR();				// test MLP on the XOR problem
-	//	TestOther();			// test MLP on the other problem
+	//	TestXOR();				// test MLP on the XOR problem
+		TestOther();			// test MLP on the other problem
 	//	TestThree();			// test that have 3 hidden layers
 	}
 
